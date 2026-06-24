@@ -1,0 +1,9 @@
+[submodule "modules/hermes"]
+	path = modules/hermes
+	url = https://github.com/NousResearch/hermes-agent.git
+[submodule "modules/odysseus"]
+	path = modules/odysseus
+	url = https://github.com/pewdiepie-archdaemon/odysseus.git
+[submodule "modules/jarvis"]
+	path = modules/jarvis
+	url = https://github.com/isair/jarvis.git
