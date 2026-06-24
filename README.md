@@ -22,8 +22,7 @@ Hermes, Odysseus, and Jarvis are git submodules, kept untouched upstream. Olympu
 - Windows 11, native (no WSL)
 - NVIDIA GPU, 16GB+ VRAM recommended (developed against an RTX 5060 Ti)
 - [Ollama](https://ollama.com/download) installed and running
-- A local model pulled — currently `qwen3:14b-q4_K_M`
-
+- A local model pulled — currently `qwen3:14b-q4_K_M`Any local model pulled via Ollama, sized to your VRAM — `qwen3:14b-q4_K_M` is just the current default on this machine
 ## Getting Started
 
 ```powershell
@@ -42,6 +41,7 @@ Setup is still in progress — each submodule needs its own Python environment (
 - **Thin meta-repo** — only glue code lives here (setup, config, adapters, docs). Submodule internals are never touched directly.
 - **Upstream-first** — integration work is written so it can be contributed back to Hermes/Odysseus/Jarvis as clean PRs, not maintained as silent forks.
 - **Single-GPU reality** — design decisions (e.g. Eris running Doer→Challenger sequentially rather than in parallel) account for the fact that Ollama serializes inference on one consumer GPU regardless of how "parallel" the agent architecture looks on paper.
+- **Model-agnostic** — nothing in Olympus hardcodes a model. Every component points at Ollama's local endpoint and can be repointed at whatever you've pulled — swapping models is a config change, not a code change.
 
 ## Credits
 
