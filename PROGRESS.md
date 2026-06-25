@@ -59,3 +59,27 @@ All three submodules stay untouched upstream; integration work lives in Olympus 
   - Odysseus: only Python 3.12 installed, not 3.11 (fine — Odysseus supports 3.11+)
   - Also queued: swap `chromadb-client` → `chromadb` in Odysseus's native install
 - **Next session starts here:** redo Hermes/Odysseus env setup with the fixes above, then Jarvis (`run_windows.ps1`)
+
+## Session — 2026-06-26
+
+**Goal:** Resume per-component Python environment setup (paused from previous session due to uv PATH staleness + Python version mismatches).
+
+**Done:**
+- Created `.venv` (Python 3.12.10) for all four components: Hermes, Odysseus, Jarvis, Eris
+- Hermes: `uv pip install -e .` — clean install, 64 packages, no issues
+- Odysseus: editable install initially failed (`ModuleNotFoundError: httpx`) because `core/__init__.py` imports happen at setup-time, before build isolation has the package's deps. Fixed via:
+  - `uv pip install --python .venv\Scripts\python.exe httpx setuptools wheel`
+  - `uv pip install --python .venv\Scripts\python.exe -e . --no-build-isolation`
+  - `uv venv` does not pre-seed setuptools/wheel — needed explicitly for `--no-build-isolation` builds
+- Jarvis: not a packaged project (no `pyproject.toml`/`setup.py`), installs via `requirements.txt`. `webrtcvad==2.0.10` fails to build on Windows (needs MSVC C++ Build Tools, no prebuilt wheel). Fixed without touching the submodule's tracked `requirements.txt`:
+  - Installed `webrtcvad-wheels==2.0.14` (prebuilt-wheel fork, same `webrtcvad` import namespace)
+  - Filtered the `webrtcvad==2.0.10` line out via `findstr /v` into a local copy (`jarvis-requirements-filtered.txt`, outside the submodule) and installed from that
+- Eris: confirmed empty except `.venv` — no code, no `pyproject.toml` yet. Not a blocker; Doer/Challenger orchestrator hasn't been scaffolded yet.
+
+**Gotchas logged for next time:**
+- `uv venv` does NOT include setuptools/wheel by default — needed for any `--no-build-isolation` install
+- macOS-first packages (like Jarvis's `webrtcvad`) may need a Windows-wheel fork substitute rather than a straight pin fix
+- Use `--python .venv\Scripts\python.exe` explicitly with `uv pip install` instead of activating — PowerShell execution policy blocks `.venv\Scripts\activate.ps1` by default on this machine
+
+**Next session:**
+- Scaffold Eris: `pyproject.toml`, package structure, start Doer/Challenger orchestration design
